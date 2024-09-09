@@ -1,0 +1,23 @@
+/* SHARED */
+
+nav{
+    background-color: rgb(44, 43, 43);
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+body{
+    margin: 0px;
+    background-color: #1e1e1e;
+}
+nav a{
+    color: white;
+    text-decoration: none;
+}
+#main-button{
+    font-size: 30px;
+    margin: 0px auto;
+}
+#design-button{
+    align-content: center;
+}
