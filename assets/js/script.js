@@ -8,6 +8,12 @@ const clear = document.querySelector('#clearButton');
 const elementArea = document.querySelector(".area");
 const fieldContainer = document.querySelector('.field-container');
 
+// local storage of field elements
+let tempFieldImages = {
+    fieldElements: [],
+};
+
+// global variable of currently chosen object
 let currentObject;
 
 
@@ -39,15 +45,18 @@ trash.addEventListener('click', function(){
 // function for when clear button is clicked
 clear.addEventListener('click', function(){
     console.log("Clear button pressed.");
-    let placedButtons = document.querySelectorAll('.field-container button');
+    let placedElements = document.querySelectorAll('.field-container img');
     currentObject = '';
     
     // remove all placed buttons (images) on the field
-    for (let i=0; i<placedButtons.length; i++){
-        placedButtons[i].remove();
+    for (let i=1; i<placedElements.length; i++){
+        placedElements[i].remove();
     }
-})
 
+    // delete from local storage
+    tempFieldImages.fieldElements = [];
+    updateLocalStorage();
+})
 
 
 
@@ -65,47 +74,46 @@ fieldContainer.addEventListener('click', function(e){
     console.log('Mouse position in percentage: ', percentageX + '%', percentageY + '%');
 
     // create button and assign styles
-    const currentButton = document.createElement('button');
-    currentButton.style.position = 'absolute';
-    currentButton.style.left = percentageX + '%';
-    currentButton.style.top = percentageY + '%';
-    currentButton.style.backgroundColor = 'transparent';
-    currentButton.style.border = "none";
-    currentButton.style.cursor = "default";
-
-    // change the cursor to trash icon for created icons only if trash is selected
-    if(currentObject === 'trash'){
-        currentButton.style.cursor = 'url("assets/images/trash.svg"), auto';
-    }
-    
-    // create current image to add to button
     const currentImage = document.createElement('img');
+    currentImage.style.position = 'absolute';
+    currentImage.style.left = percentageX + '%';
+    currentImage.style.top = percentageY + '%';
+    currentImage.style.backgroundColor = 'transparent';
+    currentImage.style.border = "none";
     currentImage.style.width = '32px';
     currentImage.style.height = '32px';
-
 
     // check what the current chosen object is
     if (currentObject === 'soccerBall'){
         currentImage.src = "assets/images/soccerBall.svg";
-        currentButton.appendChild(currentImage);
     } else if (currentObject === 'bluePlayer'){
         currentImage.src = "assets/images/bluePlayer.svg";
-        currentButton.appendChild(currentImage);
     } else if (currentObject === 'redPlayer'){
         currentImage.src = "assets/images/redPlayer.svg";
-        currentButton.appendChild(currentImage);
     } else {
         return;
     }
 
-    // add current image to the field
-    fieldContainer.append(currentButton);
+    // add to object tempFieldImages's fieldImages array 
+    tempFieldImages.fieldElements.push({
+        url: currentImage.src,
+        position: 'absolute',
+        left: percentageX + '%',
+        top: percentageY + '%',
+        backgroundColor: 'transparent',
+        border: "none",
+        width: '32px',
+        height:'32px',
+    });
+    updateLocalStorage();
 
+    // add current image to the field
+    fieldContainer.append(currentImage);
 
     // if button is clicked using trash icon, delete
-    currentButton.addEventListener('click', function(){
+    currentImage.addEventListener('click', function(){
         if (currentObject === 'trash'){
-            currentButton.remove();
+            currentImage.remove();
             console.log("removed")
         } else {
             return;
@@ -113,4 +121,38 @@ fieldContainer.addEventListener('click', function(e){
     })
 })
 
-//const clickedButton
+function updateLocalStorage(){
+    // add to local storage;
+    localStorage.setItem('storedObjects', JSON.stringify(tempFieldImages))
+}
+
+// get field elements from local storage
+function loadFromLocalStorage(){
+    const storedElements = JSON.parse(localStorage.getItem('storedObjects'));
+
+    if (storedElements){
+        tempFieldImages = storedElements;
+
+        for(let i = 0; i<tempFieldImages.fieldElements.length; i++){
+            const imageData = tempFieldImages.fieldElements[i];
+            const img = document.createElement("img");
+            img.style.position = 'absolute';
+            img.style.left = imageData.left;
+            img.style.top = imageData.top;
+            img.style.backgroundColor = imageData.backgroundColor;
+            img.style.border = imageData.border;
+            img.style.width = imageData.width;
+            img.style.height = imageData.height;
+            img.src = imageData.url;
+            fieldContainer.appendChild(img);
+        }
+    }
+}
+
+function getFromLocalStorage(){
+    localStorage.getItem()
+}
+
+
+// load data from local storage on page load
+window.onload = loadFromLocalStorage;

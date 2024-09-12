@@ -23,6 +23,9 @@ body section button{
 body section button img {
     transition: transform 0.2s ease;
 }
+body section button:hover{
+    background-color: #1e1e1e;
+}
 body section button:hover img{
     transform: scale(1.2);
 }
@@ -82,7 +85,7 @@ main{
     width: 800px;
     position: relative;
 }
-.field-container img{
+#field-container-img{
     width: 100%;
     border-radius: 20px;
 }
